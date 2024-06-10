@@ -37,7 +37,7 @@ main_style = """
         padding-top: 0 !important; /* Elimina el margen superior */
     }
     .stButton button {
-        background-color: #4CAF50;
+        background-color: #1A7B94;
         color: white;
         border-radius: 4px;
         padding: 10px 24px;
@@ -46,7 +46,7 @@ main_style = """
         cursor: pointer;
     }
     .stButton button:hover {
-        background-color: #45a049;
+        background-color: #CEDFEC;
     }
     .stTextInput input {
         border-radius: 4px;
@@ -114,8 +114,11 @@ with tab1:
     Inicia sesión para averiguar qué farmacias cercanas cuentan con el medicamento que buscas. 
     Si todavía no tienes una cuenta, créate una.
     """)
-    st.page_link(r"pages\RegistroUsuario.py" , label=":blue[Crear cuenta]")
-    st.page_link(r"pages\Usuario.py",label=":blue[Iniciar sesión]")
+    if st.button("Crear cuenta"):
+        st.switch_page("pages/RegistroUsuario.py")
+    if st.button("Iniciar sesión"):
+        st.switch_page("pages/Usuario.py")
+
 
 with tab2:
     st.subheader("Edite su stock o registre su farmacia")
@@ -123,8 +126,11 @@ with tab2:
     Registra tu farmacia para que te conozcan los clientes. 
     Puedes actualizar tu stock cada vez que sea necesario.
     """)
-    st.page_link(r"pages\RegistroFarmacia.py" , label=":blue[Registra tu farmacia]")
-    st.page_link(r"pages\EditarStock.py",label= ":blue[Edita tu stock]")
+    if st.button("Registra tu farmacia"):
+        st.switch_page("pages/RegistroFarmacia.py")
+    if st.button("Edita tu stock"):
+        st.switch_page("pages/EditarStock.py")
+                
 
 # Carrousel de imágenes (simulado con columnas)
 st.markdown("<br>", unsafe_allow_html=True)
