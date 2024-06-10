@@ -150,7 +150,8 @@ if st.button('Guardar'):
         bar.empty()
         st.success('Tu usuario ha sido creado correctamente', icon="✅")
         st.write('Ahora inicia sesión para buscar medicamentos en tu zona')
-        st.page_link(r"C:\Users\PC\Desktop\Proyecto CDM1\pages\Usuario.py",label="Iniciar Sesión")
+        if st.button("Inicia sesión"):
+            st.switch_page("pages/Usuario.py")
 
 # Pie de página
 st.markdown("---")

@@ -217,8 +217,9 @@ if st.button('Continuar') or st.session_state.state_initialized:
         my_bar.empty()
         st.success('Tu farmacia ha sido registrada correctamente', icon="✅")
         st.write('Ahora inicia sesión para actualizar tu stock así los usuarios pueden encontrar tu farmacia como punto de venta')
-        st.page_link(r"C:\Users\cande\OneDrive\Escritorio\UA\Proyecto CDM\pages\EditarStock.py", label="Iniciar Sesión")
-
+        if st.button("Inicia sesión"):
+            st.switch_page("pages/EditarStock.py")
+        
 # Pie de página
 st.markdown("---")
 st.markdown('<div class="footer">© 2024 MedPoint. Todos los derechos reservados.</div>', unsafe_allow_html=True)
