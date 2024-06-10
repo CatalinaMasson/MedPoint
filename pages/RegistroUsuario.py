@@ -151,7 +151,7 @@ if st.button('Guardar'):
         st.success('Tu usuario ha sido creado correctamente', icon="✅")
         st.write('Ahora inicia sesión para buscar medicamentos en tu zona')
         if st.button("Inicia sesión"):
-            st.switch_page("pages/Usuario.py")
+            st.switch_page(r"pages\Usuario.py")
 
 # Pie de página
 st.markdown("---")
