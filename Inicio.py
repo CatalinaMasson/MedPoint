@@ -30,11 +30,11 @@ sidebar_style = f"""
 st.markdown(sidebar_style, unsafe_allow_html=True)
 
 # CSS personalizado para la app
-st.markdown(
-    """
+main_style = """
     <style>
     .main {
         background-color: #DCEAF1;
+        padding-top: 0 !important; /* Elimina el margen superior */
     }
     .stButton button {
         background-color: #4CAF50;
@@ -78,38 +78,16 @@ st.markdown(
         font-size: 16px;
     }
     </style>
-    """,
-    unsafe_allow_html=True
-)
-# Función para cambiar entre modos claro y oscuro
-def toggle_dark_mode():
-    st.markdown(
-        """
-        <style>
-        .main {
-            background-color: #333;
-            color: #fff;
-        }
-        .stButton button {
-            background-color: #555;
-            color: #fff;
-        }
-        .stButton button:hover {
-            background-color: #666;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    """
+st.markdown(main_style, unsafe_allow_html=True)
 
-# Interruptor para cambiar entre modos claro y oscuro
-if st.checkbox('Modo oscuro', key='dark_mode'):
-    toggle_dark_mode()
+
+
 # Encabezado principal
 st.title("Bienvenido a MedPoint")
 
 # Sección de columnas con imagen y descripción
-col1, col2 = st.columns([4,1])
+col1, col2 = st.columns([2, 1])
 
 with col1:
     st.markdown("""
@@ -125,7 +103,28 @@ with col1:
     """, unsafe_allow_html=True)
 
 with col2:
-    st.image('Mapa.jpg', use_column_width=True, output_format='auto')
+    st.image('mapa con compu.png', use_column_width=True, output_format='auto')
+
+# Pestañas de usuario y farmacia
+tab1, tab2 = st.tabs(["Soy Usuario", "Soy Farmacia"])
+
+with tab1:
+    st.subheader("Inicie sesión o cree una cuenta")
+    st.write("""
+    Inicia sesión para averiguar qué farmacias cercanas cuentan con el medicamento que buscas. 
+    Si todavía no tienes una cuenta, créate una.
+    """)
+    st.page_link(r"pages\RegistroUsuario.py" , label=":blue[Crear cuenta]")
+    st.page_link(r"pages\Usuario.py",label=":blue[Iniciar sesión]")
+
+with tab2:
+    st.subheader("Edite su stock o registre su farmacia")
+    st.write("""
+    Registra tu farmacia para que te conozcan los clientes. 
+    Puedes actualizar tu stock cada vez que sea necesario.
+    """)
+    st.page_link(r"pages\RegistroFarmacia.py" , label=":blue[Registra tu farmacia]")
+    st.page_link(r"pages\EditarStock.py",label= ":blue[Edita tu stock]")
 
 # Carrousel de imágenes (simulado con columnas)
 st.markdown("<br>", unsafe_allow_html=True)
@@ -145,33 +144,11 @@ st.markdown("<br>", unsafe_allow_html=True)
 carousel_col1, carousel_col2, carousel_col3 = st.columns(3)
 
 with carousel_col1:
-    st.image('feature1.jpg', caption='Encuentra medicamentos rápidamente', use_column_width=True)
+    st.image('feature5.jpg', caption='Encuentra medicamentos rápidamente', use_column_width=True)
 with carousel_col2:
     st.image('feature2.jpg', caption='Conéctate con farmacias locales', use_column_width=True)
 with carousel_col3:
     st.image('feature3.jpg', caption='Actualización de stock en tiempo real', use_column_width=True)
-
-# Pestañas de usuario y farmacia
-tab1, tab2 = st.tabs(["Soy Usuario", "Soy Farmacia"])
-
-with tab1:
-    st.subheader("Inicie sesión o cree una cuenta")
-    st.write("""
-    Inicia sesión para averiguar qué farmacias cercanas cuentan con el medicamento que buscas. 
-    Si todavía no tienes una cuenta, créate una.
-    """)
-    st.page_link(r"C:\Users\PC\Desktop\Proyecto CDM1\pages\RegistroUsuario.py" , label="Crear cuenta")
-    st.page_link(r"C:\Users\PC\Desktop\Proyecto CDM1\pages\Usuario.py",label="Iniciar sesión")
-
-with tab2:
-    st.subheader("Edite su stock o registre su farmacia")
-    st.write("""
-    Registra tu farmacia para que te conozcan los clientes. 
-    Puedes actualizar tu stock cada vez que sea necesario.
-    """)
-    st.page_link(r"C:\Users\PC\Desktop\Proyecto CDM1\pages\RegistroFarmacia.py" , label="Registra tu farmacia")
-    st.page_link(r"C:\Users\PC\Desktop\Proyecto CDM1\pages\EditarStock.py",label="Edita tu stock")
-
 
 # Formulario de contacto
 st.markdown("### Contáctanos")
@@ -183,6 +160,7 @@ contact_form = """
 </form>
 """
 st.markdown(contact_form, unsafe_allow_html=True)
+
 # Pie de página
 st.markdown("---")
 st.markdown('<div class="footer">© 2024 MedPoint. Todos los derechos reservados.</div>', unsafe_allow_html=True)

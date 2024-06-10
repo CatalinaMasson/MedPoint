@@ -1,11 +1,8 @@
 import streamlit as st
-import sqlite3
 import pandas as pd
 import psycopg2
 import base64
-import matplotlib.pyplot as plt
 import plotly.express as px
-import time
 
 # Configuración de la página
 st.set_page_config(page_title='MedPoint', page_icon='logoMedPoint.jpg', layout='wide')
@@ -17,7 +14,7 @@ def get_base64_of_bin_file(bin_file):
     return base64.b64encode(data).decode()
 
 # Ruta a la imagen de fondo
-image_path = 'Logo-esquina.jpg'  # Asegúrate de que la imagen esté en el mismo directorio que tu script
+image_path = 'Logo-esquina.jpg'
 
 # Convierte la imagen a base64
 image_base64 = get_base64_of_bin_file(image_path)
@@ -33,27 +30,18 @@ sidebar_style = f"""
     }}
     </style>
     """
-
-# Agregar el CSS al HTML de la app
 st.markdown(sidebar_style, unsafe_allow_html=True)
+
 # Configuración de la conexión
 def get_db_connection():
-    user = 'postgres.milzajyelkzaboqmffzw'
-    password = 'cienciadedatos'
-    host = 'aws-0-us-west-1.pooler.supabase.com'
-    port = '5432'
-    dbname = 'postgres'
     conn = psycopg2.connect(
-        dbname=dbname,
-        user=user,
-        password=password,
-        host=host,
-        port=port
+        dbname='postgres',
+        user='postgres.milzajyelkzaboqmffzw',
+        password='cienciadedatos',
+        host='aws-0-us-west-1.pooler.supabase.com',
+        port='5432'
     )
     return conn
-
-
-cursor = get_db_connection().cursor()
 
 def stock_exists(id_f, id_med):
     conn = get_db_connection()
@@ -76,8 +64,6 @@ def delete_stock(id_f, id_med):
     finally:
         conn.close()
 
-
-
 def edit_stock(stock, id_f, id_m):
     conn = get_db_connection()
     try:
@@ -88,19 +74,46 @@ def edit_stock(stock, id_f, id_m):
     finally:
         conn.close()
 
-
-
 def search_idmed(med_name):
     conn = get_db_connection()
     try:
         with conn.cursor() as cur:
-            query = "SELECT ID_medicamento FROM medpoint.medicamentos WHERE nombre = '{}'".format(med_name)
+            query = "SELECT ID_medicamento FROM medpoint.medicamentos WHERE nombre = %s"
             cur.execute(query, (med_name,))
             result = cur.fetchone()
             return result 
     finally:
         conn.close()
 
+def get_available_meds(id_f):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            query = """
+            SELECT nombre FROM medpoint.medicamentos 
+            WHERE ID_medicamento NOT IN (SELECT ID_medicamento FROM medpoint.disponibilidad WHERE ID_F = %s)
+            """
+            cur.execute(query, (id_f,))
+            result = cur.fetchall()
+            return [r[0] for r in result]
+    finally:
+        conn.close()
+
+def get_current_meds(id_f):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            query = """
+            SELECT m.nombre, d.stock
+            FROM medpoint.medicamentos m
+            JOIN medpoint.disponibilidad d ON m.ID_medicamento = d.ID_medicamento
+            WHERE d.ID_F = %s
+            """
+            cur.execute(query, (id_f,))
+            result = cur.fetchall()
+            return [(r[0], r[1]) for r in result]
+    finally:
+        conn.close()
 
 st.title('Gestión de medicamentos')
 
@@ -111,6 +124,9 @@ if 'l_in' not in st.session_state:
 if 'id_f' not in st.session_state:
     st.session_state.id_f = 0
 
+if 'refresh' not in st.session_state:
+    st.session_state.refresh = False
+
 # Inicio de sesión
 if not st.session_state.l_in:
     st.subheader("Iniciar sesión")
@@ -118,73 +134,87 @@ if not st.session_state.l_in:
     ph_street = st.text_input("Ingrese la calle y altura de su farmacia", value=None)
     pharmacy_password = st.text_input("Ingrese su contraseña", type="password")
     
-
     if st.button("Iniciar Sesión"):
-        query = "SELECT nombre, calle, contraseña FROM medpoint.farmacia WHERE nombre='{}' AND calle='{}' AND contraseña='{}'".format(ph_name, ph_street, pharmacy_password)
+        query = "SELECT nombre, calle, contraseña FROM medpoint.farmacia WHERE nombre=%s AND calle=%s AND contraseña=%s"
+        conn = get_db_connection()
+        cursor = conn.cursor()
         cursor.execute(query, (ph_name, ph_street, pharmacy_password))
         result = cursor.fetchone()
-    
         if result:
             st.session_state.l_in = True
-            query = "SELECT ID_F FROM medpoint.farmacia WHERE nombre='{}' AND calle='{}' AND contraseña='{}'".format(ph_name, ph_street, pharmacy_password)
+            query = "SELECT ID_F FROM medpoint.farmacia WHERE nombre=%s AND calle=%s AND contraseña=%s"
             cursor.execute(query, (ph_name, ph_street, pharmacy_password))
-            id_f = cursor.fetchone()
+            id_f = cursor.fetchone()[0]
             st.session_state.id_f = id_f
             st.success("Inicio de sesión exitoso")
         else:
             st.error("Datos incorrectos")
+        conn.close()
 
 if st.session_state.l_in:
-    st.subheader("Editar stock")
+    selected_tab = st.radio("Seleccione una pestaña", ["Visualizar Stock", "Editar Stock", "Agregar Medicamentos"])
     
-    data_df = pd.DataFrame(
-    {"Medicamentos" : ["Albuterol", "Amlodipina", "Amoxicilina", "Aspirina", "Azitromicina", "Clonazepam", "Diclofenac", "Diazepam", "Fluoxetina", "Furosemida", "Glimepirida", "Ibuprofeno", "Insulina glargina", "Levotiroxina", "Lisinopril", "Loratadina", "Losartán", "Metformina", "Omeprazol", "Paracetamol", "Propranolol", "Tramadol", "Valsartán", "Warfarina", "Zolpidem"],
-        "Stock" : [0] * 25})
+    if selected_tab == "Visualizar Stock":
+        st.subheader("Visualizar Stock")
+        
+        conn = get_db_connection()
+        query = """
+        SELECT m.nombre, d.stock
+        FROM medpoint.medicamentos m
+        JOIN medpoint.disponibilidad d ON m.ID_medicamento = d.ID_medicamento
+        WHERE d.ID_F = %s
+        """
+        stock_df = pd.read_sql_query(query, conn, params=(st.session_state.id_f,))
+        conn.close()
+        
+        if stock_df.empty:
+            st.info("No tiene ningún medicamento en stock. Por favor, vaya a la pestaña 'Agregar Medicamentos'.")
+        else:
+            col1, col2 = st.columns([1,2])
+        
+            with col1:
+                st.write("Stock de Medicamentos")
+                st.dataframe(stock_df)
 
-    edited_df = st.data_editor(
-        data_df,
-        column_config={
-            "Stock": st.column_config.NumberColumn(
-                "Stock",
-                help="Haz doble click en el casillero e indica el stock de tu producto",
-                min_value=0,
-                step=1,
-            )
-        },
-        hide_index=True,
-    )
+            with col2:
+                fig_pie = px.pie(stock_df, names='nombre', values='stock', 
+                                labels={'nombre':''})
+                st.plotly_chart(fig_pie)
 
-    if st.button('Guardar'):
-        bar = st.progress(5, text = "Comenzando la actualización de stock...")
-        time.sleep(0.725)
-        t = 5
-        for i in range(1, 26):
-            n = i - 1 
-            t = t + 3
-            med = edited_df["Medicamentos"].iloc[n]
-            bar.progress(t, text = f"Guardando stock de {med}...")
-            time.sleep(0.05)
-            id_med = search_idmed(med)
-            if stock_exists(st.session_state.id_f[0] , id_med[0]):
-                delete_stock(st.session_state.id_f[0] , id_med[0])
-            stock = edited_df["Stock"].iloc[n]
-            if stock > 0:
-                edit_stock(stock, st.session_state.id_f[0] , id_med[0])
-            elif stock < 0:
-                st.error("No se aceptan cantidades negativas de medicamentos.")
-        bar.progress(95, text = "Completando actualización de stock...")
-        time.sleep(0.725)
-        bar.progress(100, text = "Proceso completado")
-        bar.empty()
-        st.success('Tu stock ha sido actualizado correctamente', icon="✅")
-        # Visualización del stock en gráficos
-        st.subheader("Visualización del Stock")
-        # Gráfico de pastel
-        fig_pie = px.pie(edited_df, names='Medicamentos', values='Stock', title='Distribución de Stock',
-                         labels={'Medicamentos':''})
-        st.plotly_chart(fig_pie)
+    elif selected_tab == "Editar Stock":
+        st.subheader("Editar Stock")
+        current_meds = get_current_meds(st.session_state.id_f)
+        
+        if not current_meds:
+            st.info("No tiene ningún medicamento en stock. Por favor, vaya a la pestaña 'Agregar Medicamentos'.")
+        else:
+            med_to_edit = st.selectbox("Seleccione un medicamento para editar", [med[0] for med in current_meds], key="edit_stock")
+            current_stock = next((med[1] for med in current_meds if med[0] == med_to_edit), 0)
+            new_stock = st.number_input("Ingrese la nueva cantidad de stock", value=current_stock, min_value=0, step=1)
 
+            if st.button("Actualizar Stock"):
+                id_med = search_idmed(med_to_edit)[0]
+                delete_stock(st.session_state.id_f, id_med)
+                if new_stock > 0:
+                    edit_stock(new_stock, st.session_state.id_f, id_med)
+                    st.success(f'Stock de {med_to_edit} actualizado a {new_stock}.')
+                else:
+                    st.info(f'{med_to_edit} ha sido eliminado del stock.')
+                
+                st.experimental_rerun()
 
-# Pie de página
-st.markdown("---")
-st.markdown('<div class="footer">© 2024 MedPoint. Todos los derechos reservados.</div>', unsafe_allow_html=True)
+    elif selected_tab == "Agregar Medicamentos":
+        st.subheader("Agregar Medicamentos")
+        available_meds = get_available_meds(st.session_state.id_f)
+        med_to_add = st.selectbox("Seleccione un medicamento para agregar", available_meds, key="add_stock")
+        stock_to_add = st.number_input("Ingrese la cantidad de stock", min_value=0, step=1)
+        
+        if st.button("Agregar Medicamento"):
+            if stock_to_add == 0:
+                st.error("No se puede agregar un medicamento con stock 0.")
+            else:
+                id_med = search_idmed(med_to_add)[0]
+                edit_stock(stock_to_add, st.session_state.id_f, id_med)
+                st.success(f'{med_to_add} ha sido agregado con {stock_to_add} en stock.')
+                
+                st.experimental_rerun()
