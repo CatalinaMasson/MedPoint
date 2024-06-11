@@ -152,7 +152,7 @@ if st.button('Guardar'):
         st.success('Tu usuario ha sido creado correctamente', icon="✅")
         st.write('Ahora inicia sesión para buscar medicamentos en tu zona')
         if st.button("Inicia sesión"):
-            switch_page("Usuario")
+            st.switch_page("pages/Usuario")
 
 # Pie de página
 st.markdown("---")
