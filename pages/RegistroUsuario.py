@@ -3,6 +3,7 @@ import psycopg2
 import base64
 import time
 import re
+from streamlit_extras.switch_page_button import switch_page
 
 # Configuración de la página
 st.set_page_config(page_title='MedPoint', page_icon='logoMedPoint.jpg', layout='wide')
@@ -151,7 +152,7 @@ if st.button('Guardar'):
         st.success('Tu usuario ha sido creado correctamente', icon="✅")
         st.write('Ahora inicia sesión para buscar medicamentos en tu zona')
         if st.button("Inicia sesión"):
-            st.switch_page("Usuario")
+            switch_page("Usuario")
 
 # Pie de página
 st.markdown("---")
