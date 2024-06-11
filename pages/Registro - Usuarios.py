@@ -149,8 +149,8 @@ if st.button('Guardar'):
         bar.progress(100, text = "Registro concluido")
         bar.empty()
         st.success('Tu usuario ha sido creado correctamente', icon="✅")
-        st.write('Ahora inicia sesión para buscar medicamentos en tu zona')
-
+        st.write('Ahora inicia sesión para buscar medicamentos en tu zona.')
+        st.markdown("Encontrarás la pestaña ***Iniciar sesión - Usuarios*** en la barra lateral.")
 
 # Pie de página
 st.markdown("---")
