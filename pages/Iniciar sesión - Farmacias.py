@@ -189,6 +189,7 @@ if st.session_state.l_in:
         if not current_meds:
             st.info("No tiene ningún medicamento en stock. Por favor, vaya a la pestaña 'Agregar Medicamentos'.")
         else:
+            st.markdown(''':blue-background[En el caso de no tener stock de un medicamneto o de querer eliminarlo de la lista, ingrese 0 en la nueva cantidad de stock.]''')
             med_to_edit = st.selectbox("Seleccione un medicamento para editar", [med[0] for med in current_meds], key="edit_stock")
             current_stock = next((med[1] for med in current_meds if med[0] == med_to_edit), 0)
             new_stock = st.number_input("Ingrese la nueva cantidad de stock", value=current_stock, min_value=0, step=1)
@@ -243,3 +244,8 @@ if st.session_state.l_in:
                 bar.empty()
                 
                 st.experimental_rerun()
+
+
+# Pie de página
+st.markdown("---")
+st.markdown('<div class="footer">© 2024 MedPoint. Todos los derechos reservados.</div>', unsafe_allow_html=True)
