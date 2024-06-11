@@ -218,7 +218,7 @@ if st.button('Continuar') or st.session_state.state_initialized:
         st.success('Tu farmacia ha sido registrada correctamente', icon="✅")
         st.write('Ahora inicia sesión para actualizar tu stock así los usuarios pueden encontrar tu farmacia como punto de venta')
         if st.button("Inicia sesión"):
-            st.switch_page("pages/EditarStock")
+            switch_page("EditarStock")
         
 # Pie de página
 st.markdown("---")
