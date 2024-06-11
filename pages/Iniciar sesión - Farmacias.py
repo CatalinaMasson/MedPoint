@@ -202,7 +202,8 @@ if st.session_state.l_in:
                     edit_stock(new_stock, st.session_state.id_f, id_med)
                     bar.progress(80, text = "Aguarde un momento...")
                     time.sleep(0.725)
-                    bar.progress(100, text = "Actualización concluida.")
+                    bar.progress(99, text = "Actualización concluida.")
+                    st.success(f'Stock de {med_to_edit} actualizado a {new_stock}.')
                     bar.empty()
                     st.success(f'Stock de {med_to_edit} actualizado a {new_stock}.')
                 else:
@@ -227,15 +228,17 @@ if st.session_state.l_in:
                 bar.progress(80, text = "Aguarde un momento...")
                 time.sleep(0.725)
                 bar.progress(100, text = "Error. Intente de nuevo.")
-                bar.empty()
                 st.error("No se puede agregar un medicamento con stock 0.")
+                time.sleep(0.925)
+                bar.empty()
             else:
                 bar.progress(80, text = "Aguarde un momento...")
                 time.sleep(0.725)
                 id_med = search_idmed(med_to_add)[0]
                 edit_stock(stock_to_add, st.session_state.id_f, id_med)
                 bar.progress(100, text = "Stock actualizado correctamente.")
-                bar.empty()
                 st.success(f'{med_to_add} ha sido agregado con {stock_to_add} en stock.')
+                time.sleep(0.725)
+                bar.empty()
                 
                 st.experimental_rerun()
