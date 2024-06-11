@@ -4,7 +4,6 @@ import base64
 import time
 import pandas as pd
 import re
-from streamlit_extras.switch_page_button import switch_page
 # Configuración de la página
 st.set_page_config(page_title='MedPoint', page_icon='logoMedPoint.jpg', layout='wide')
 
