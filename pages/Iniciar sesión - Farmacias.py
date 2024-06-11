@@ -246,3 +246,4 @@ if st.session_state.l_in:
 
 if st.button("Cerrar Sesión"):
     st.session_state.I_in = False
+st.experimental_rerun()
