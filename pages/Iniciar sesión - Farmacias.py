@@ -201,7 +201,6 @@ if st.session_state.l_in:
                 else:
                     st.info(f'{med_to_edit} ha sido eliminado del stock.')
                 
-                st.experimental_rerun()
 
     elif selected_tab == "Agregar Medicamentos":
         st.subheader("Agregar Medicamentos")
@@ -217,4 +216,3 @@ if st.session_state.l_in:
                 edit_stock(stock_to_add, st.session_state.id_f, id_med)
                 st.success(f'{med_to_add} ha sido agregado con {stock_to_add} en stock.')
                 
-                st.experimental_rerun()
