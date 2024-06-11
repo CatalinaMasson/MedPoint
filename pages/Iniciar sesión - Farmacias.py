@@ -193,14 +193,25 @@ if st.session_state.l_in:
             new_stock = st.number_input("Ingrese la nueva cantidad de stock", value=current_stock, min_value=0, step=1)
 
             if st.button("Actualizar Stock"):
+                bar = st.progress(25, text = "Procesando...")
+                time.sleep(0.725)
                 id_med = search_idmed(med_to_edit)[0]
                 delete_stock(st.session_state.id_f, id_med)
                 if new_stock > 0:
                     edit_stock(new_stock, st.session_state.id_f, id_med)
+                    bar.progress(80, text = "Aguarde un momento...")
+                    time.sleep(0.725)
+                    bar.progress(100, text = "Actualización concluida.")
+                    bar.empty()
                     st.success(f'Stock de {med_to_edit} actualizado a {new_stock}.')
                 else:
+                    bar.progress(80, text = "Eliminando medicamento...")
+                    time.sleep(0.725)
+                    bar.progress(100, text = f"{med_to_edit} ha sido eliminado correctamente.")
+                    bar.empty()
                     st.info(f'{med_to_edit} ha sido eliminado del stock.')
                 
+                st.experimental_rerun()
 
     elif selected_tab == "Agregar Medicamentos":
         st.subheader("Agregar Medicamentos")
@@ -209,10 +220,21 @@ if st.session_state.l_in:
         stock_to_add = st.number_input("Ingrese la cantidad de stock", min_value=0, step=1)
         
         if st.button("Agregar Medicamento"):
+            bar = st.progress(25, text = "Procesando...")
+            time.sleep(0.725)
             if stock_to_add == 0:
+                bar.progress(80, text = "Aguarde un momento...")
+                time.sleep(0.725)
+                bar.progress(100, text = "Error. Intente de nuevo.")
+                bar.empty()
                 st.error("No se puede agregar un medicamento con stock 0.")
             else:
+                bar.progress(80, text = "Aguarde un momento...")
+                time.sleep(0.725)
                 id_med = search_idmed(med_to_add)[0]
                 edit_stock(stock_to_add, st.session_state.id_f, id_med)
+                bar.progress(100, text = "Stock actualizado correctamente.")
+                bar.empty()
                 st.success(f'{med_to_add} ha sido agregado con {stock_to_add} en stock.')
                 
+                st.experimental_rerun()
