@@ -115,9 +115,9 @@ with tab1:
     Si todavía no tienes una cuenta, créate una.
     """)
     if st.button("Crear cuenta"):
-        st.switch_page("pages/RegistroUsuario.py")
+        st.switch_page("pages\Registro - Usuarios.py")
     if st.button("Iniciar sesión"):
-        st.switch_page("pages/Usuario.py")
+        st.switch_page("pages\Iniciar sesión - Usuarios.py")
 
 
 with tab2:
@@ -127,9 +127,9 @@ with tab2:
     Puedes actualizar tu stock cada vez que sea necesario.
     """)
     if st.button("Registra tu farmacia"):
-        st.switch_page("pages/RegistroFarmacia.py")
+        st.switch_page("pages\Registro - Farmacias.py")
     if st.button("Edita tu stock"):
-        st.switch_page("pages/EditarStock.py")
+        st.switch_page("pages\Iniciar sesión - Farmacias.py")
                 
 
 # Carrousel de imágenes (simulado con columnas)
