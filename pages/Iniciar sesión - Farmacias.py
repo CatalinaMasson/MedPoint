@@ -3,6 +3,7 @@ import pandas as pd
 import psycopg2
 import base64
 import plotly.express as px
+import time
 
 # Configuración de la página
 st.set_page_config(page_title='MedPoint', page_icon='logoMedPoint.jpg', layout='wide')
@@ -127,6 +128,25 @@ if 'id_f' not in st.session_state:
 if 'refresh' not in st.session_state:
     st.session_state.refresh = False
 
+if 'success_message' not in st.session_state:
+    st.session_state.success_message = ""
+
+# Mostrar mensaje de éxito si existe
+if st.session_state.success_message:
+    st.success(st.session_state.success_message)
+    # Agregar JavaScript para recargar la página después de 2 segundos
+    st.markdown(
+        """
+        <script>
+        setTimeout(function(){
+            window.location.reload(1);
+        }, 2000);
+        </script>
+        """,
+        unsafe_allow_html=True
+    )
+    st.session_state.success_message = ""
+
 # Inicio de sesión
 if not st.session_state.l_in:
     st.subheader("Iniciar sesión")
@@ -197,9 +217,9 @@ if st.session_state.l_in:
                 delete_stock(st.session_state.id_f, id_med)
                 if new_stock > 0:
                     edit_stock(new_stock, st.session_state.id_f, id_med)
-                    st.success(f'Stock de {med_to_edit} actualizado a {new_stock}.')
+                    st.session_state.success_message = f'Stock de {med_to_edit} actualizado a {new_stock}.'
                 else:
-                    st.info(f'{med_to_edit} ha sido eliminado del stock.')
+                    st.session_state.success_message = f'{med_to_edit} ha sido eliminado del stock.'
                 
                 st.experimental_rerun()
 
@@ -215,6 +235,6 @@ if st.session_state.l_in:
             else:
                 id_med = search_idmed(med_to_add)[0]
                 edit_stock(stock_to_add, st.session_state.id_f, id_med)
-                st.success(f'{med_to_add} ha sido agregado con {stock_to_add} en stock.')
+                st.session_state.success_message = f'{med_to_add} ha sido agregado con {stock_to_add} en stock.'
                 
                 st.experimental_rerun()
