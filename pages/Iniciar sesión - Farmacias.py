@@ -3,6 +3,7 @@ import pandas as pd
 import psycopg2
 import base64
 import plotly.express as px
+import time
 
 # Configuración de la página
 st.set_page_config(page_title='MedPoint', page_icon='logoMedPoint.jpg', layout='wide')
