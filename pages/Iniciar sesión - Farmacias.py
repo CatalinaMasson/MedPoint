@@ -202,16 +202,17 @@ if st.session_state.l_in:
                     edit_stock(new_stock, st.session_state.id_f, id_med)
                     bar.progress(80, text = "Aguarde un momento...")
                     time.sleep(0.725)
-                    bar.progress(99, text = "Actualización concluida.")
+                    bar.progress(100, text = "Actualización concluida.")
                     st.success(f'Stock de {med_to_edit} actualizado a {new_stock}.')
+                    time.sleep(0.925)
                     bar.empty()
-                    st.success(f'Stock de {med_to_edit} actualizado a {new_stock}.')
                 else:
                     bar.progress(80, text = "Eliminando medicamento...")
                     time.sleep(0.725)
                     bar.progress(100, text = f"{med_to_edit} ha sido eliminado correctamente.")
-                    bar.empty()
                     st.info(f'{med_to_edit} ha sido eliminado del stock.')
+                    time.sleep(0.925)
+                    bar.empty()
                 
                 st.experimental_rerun()
 
@@ -242,3 +243,6 @@ if st.session_state.l_in:
                 bar.empty()
                 
                 st.experimental_rerun()
+
+if st.button("Cerrar Sesión"):
+    st.session_state.I_in = False
