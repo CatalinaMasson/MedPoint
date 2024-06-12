@@ -152,7 +152,7 @@ def is_valid_time_format(time_str):
     return bool(re.match(r'^([01]?[0-9]|2[0-3]):[0-5][0-9]$', time_str))
 
 def is_valid_name(ph_name):
-    return bool(re.match(r'^[A-Za-z0-9\s]+$', ph_name))
+    return bool(re.match(r'^[A-Za-z0-9\s]+$+ñ', ph_name))
 
 if st.button('Continuar') or st.session_state.state_initialized:
     bar = st.progress(25, text = "Comprobando que los campos estén completos correctamente...")
