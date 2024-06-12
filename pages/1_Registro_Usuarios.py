@@ -149,8 +149,7 @@ if st.button('Guardar'):
         bar.progress(100, text = "Registro concluido")
         bar.empty()
         st.success('Tu usuario ha sido creado correctamente', icon="✅")
-        st.write('Ahora inicia sesión para buscar medicamentos en tu zona.')
-        st.markdown("Encontrarás la pestaña ***Iniciar sesión - Usuarios*** en la barra lateral.")
+        st.markdown("Ahora ***inicia sesión*** para buscar medicamentos en tu zona.")
         st.page_link("pages/2_Iniciar_sesión_Usuarios.py", label="Iniciar sesión", icon="➡️", help=None, disabled=False, use_container_width=None)
 
 # Pie de página
