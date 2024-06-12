@@ -177,47 +177,50 @@ if st.button('Continuar') or st.session_state.state_initialized:
             bar.empty()
             st.session_state.state_initialized = True
             st.session_state.id_f = id_f
-
-    st.write("¿Qué obras sociales recibe tu farmacia?")
+            st.write("¿Qué obras sociales recibe tu farmacia?")
     
-    # Lista de obras sociales y sus IDs
-    obras_sociales = {
-        "OSDE": [1, 9, 17],
-        "Swiss Medical": [2, 10, 18],
-        "Galeno": [3, 11, 19],
-        "OMINT": [4, 12, 20],
-        "OSDIPP": [5, 13, 21],
-        "Medifé": [6, 14, 22],
-        "MEDICUS": [7, 15, 23],
-        "Jerárquicos": [8, 16, 24]
-    }
+        # Lista de obras sociales y sus IDs
+        obras_sociales = {
+            "OSDE": [1, 9, 17],
+            "Swiss Medical": [2, 10, 18],
+            "Galeno": [3, 11, 19],
+            "OMINT": [4, 12, 20],
+            "OSDIPP": [5, 13, 21],
+            "Medifé": [6, 14, 22],
+            "MEDICUS": [7, 15, 23],
+            "Jerárquicos": [8, 16, 24]
+        }
 
-    # Mantener el estado de los checkboxes
-    selected_obras_sociales = st.session_state.selected_obras_sociales
+        # Mantener el estado de los checkboxes
+        selected_obras_sociales = st.session_state.selected_obras_sociales
 
-    for obra_social, ids in obras_sociales.items():
-        checked = obra_social in selected_obras_sociales
-        if st.checkbox(obra_social, value=checked):
-            selected_obras_sociales[obra_social] = ids
-        elif obra_social in selected_obras_sociales:
-            del selected_obras_sociales[obra_social]
+        for obra_social, ids in obras_sociales.items():
+            checked = obra_social in selected_obras_sociales
+            if st.checkbox(obra_social, value=checked):
+                selected_obras_sociales[obra_social] = ids
+            elif obra_social in selected_obras_sociales:
+                del selected_obras_sociales[obra_social]
+        
+        st.session_state.selected_obras_sociales = selected_obras_sociales
+
+        if st.button('Guardar'):
+            my_bar = st.progress(30, text = "Completando registro...")
+            time.sleep(0.725)
+            for obra_social in st.session_state.selected_obras_sociales:
+                for id in obras_sociales[obra_social]:
+                    insert_cobertura(id, st.session_state.id_f)
+            my_bar.progress(90, text = "Aguarde un moemnto...")
+            time.sleep(0.725)
+            my_bar.progress(100, text = "Registro concluido")
+            my_bar.empty()
+            st.success('Tu farmacia ha sido registrada correctamente', icon="✅")
+            st.markdown("Ahora ***inicia sesión*** para actualizar tu stock así los usuarios pueden encontrar tu farmacia como punto de venta")
+            st.page_link("pages/4_Iniciar_sesión_Farmacias.py", label="Iniciar sesión", icon="➡️", help=None, disabled=False, use_container_width=None)
+
+
+        
+
     
-    st.session_state.selected_obras_sociales = selected_obras_sociales
-
-    if st.button('Guardar'):
-        my_bar = st.progress(30, text = "Completando registro...")
-        time.sleep(0.725)
-        for obra_social in st.session_state.selected_obras_sociales:
-            for id in obras_sociales[obra_social]:
-                insert_cobertura(id, st.session_state.id_f)
-        my_bar.progress(90, text = "Aguarde un moemnto...")
-        time.sleep(0.725)
-        my_bar.progress(100, text = "Registro concluido")
-        my_bar.empty()
-        st.success('Tu farmacia ha sido registrada correctamente', icon="✅")
-        st.markdown("Ahora ***inicia sesión*** para actualizar tu stock así los usuarios pueden encontrar tu farmacia como punto de venta")
-        st.page_link("pages/4_Iniciar_sesión_Farmacias.py", label="Iniciar sesión", icon="➡️", help=None, disabled=False, use_container_width=None)
-
 
         
 # Pie de página
